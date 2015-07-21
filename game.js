@@ -4,14 +4,55 @@
   var Canventure = window.Canventure = {};
   var canvas = document.getElementById("canvas");
   var ctx = canvas.getContext("2d");
-  Canventure.Box = {};
-  Canventure.Box.x = 10
-  Canventure.Box.y = 10
+  var Box = Canventure.Box = {};
+  Box.xy = [10,10];
+  var HOP_DISTANCE = 120; //pixels
+  var HOP_TIME = 100; //milliseconds
+  var HOP_SPEED = (HOP_DISTANCE / HOP_TIME) * 10;
+
+  Box.moving = false;
+
+  Box.move = function(coordinate, direction) {
+    if (!Box.moving){
+      Box.moving = true;
+      var movementInterval = setInterval(function(){
+        Box.xy[coordinate] += HOP_SPEED * direction;
+      }, 10);
+      setTimeout(function(){
+        Box.moving = false;
+        clearInterval(movementInterval);
+      }, HOP_TIME);
+    }
+  }
+
+  // Box.move = function(coordinate, direction){
+  //   if (!Box.moving){
+  //     Box.moving = true;
+  //     setTimeout(function(){
+  //       Box.moving = false;
+  //       Box.xy[coordinate] += HOP_DISTANCE * direction;
+  //     }, HOP_TIME);
+  //   }
+  //
+  // }
+
+  Box.moveRight = function(){
+    Box.move(0, 1);
+  };
+  Box.moveLeft = function(){
+    Box.move(0, -1);
+  };
+  Box.moveUp = function(){
+    Box.move(1, -1);
+  };
+  Box.moveDown = function(){
+    Box.move(1, 1);
+  };
 
   Canventure.draw = function() {
     ctx.clearRect(0,0,800,600);
     ctx.fillStyle = "#F00";
-    ctx.fillRect(Canventure.Box.x, Canventure.Box.y, 100, 100);
+    ctx.fillRect(Box.xy[0], Box.xy[1], 100, 100);
   }
 
 }());
@@ -23,14 +64,14 @@ var RIGHT = 39;
 
 document.onkeydown = function(evt) {
   if (evt.keyCode === UP){
-    Canventure.Box.y -= 1;
+    Canventure.Box.moveUp();
   } else if (evt.keyCode === DOWN){
-    Canventure.Box.y += 1;
+    Canventure.Box.moveDown();
   } else if (evt.keyCode === LEFT){
-    Canventure.Box.x -= 1;
+    Canventure.Box.moveLeft();
   } else if (evt.keyCode === RIGHT){
-    Canventure.Box.x += 1;
+    Canventure.Box.moveRight();
   }
 }
 
-setInterval(Canventure.draw, 50);
+setInterval(Canventure.draw, 1);
